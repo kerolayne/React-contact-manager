@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import ContactForm from './ContactForm';
-import ContactItem from './components/ContactItem'; // <<<<<< Importe o ContactItem aqui
+import ContactItem from './components/ContactItem'; 
 
-// import './App.css'; // Mantenha ou remova conforme sua necessidade de um App.css global
 
 function App() {
   const [contacts, setContacts] = useState([]);
@@ -11,16 +10,14 @@ function App() {
     setContacts((prevContacts) => [...prevContacts, newContact]);
   };
 
-  // <<<<<< Nova função para deletar um contato
+  
   const handleDeleteContact = (idToDelete) => {
     setContacts((prevContacts) => prevContacts.filter(contact => contact.id !== idToDelete));
   };
-  // <<<<<< Fim da nova função
-
-  // Função para editar (ainda não implementada a lógica de edição no formulário)
+  
   const handleEditContact = (idToEdit) => {
     alert(`Editar contato com ID: ${idToEdit}`);
-    // Futuramente, você passaria o contato para o ContactForm para edição
+   
   };
 
   return (
