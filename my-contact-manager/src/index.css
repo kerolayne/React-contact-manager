@@ -1,13 +1,7 @@
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
+import { registerRootComponent } from 'expo';
+import App from './App';
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
-}
+// registerRootComponent chama AppRegistry.registerComponent('main', () => App);
+// e garante que o ambiente do Expo esteja configurado corretamente.
+// Este é o ponto de entrada para a aplicação.
+registerRootComponent(App);
