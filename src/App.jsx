@@ -4,8 +4,8 @@ import './App.css'
 import React, { useState, useEffect } from 'react';
 
 // 1. Importar os componentes e a configuração do Firebase
-import ContactForm from './components/ContactForm';
-import ContactList from './components/ContactList';
+import ContactForm from './ContactForm';
+import ContactList from './ContactList';
 import { db , auth} from './firebaseConfig';
 
 // 2. Importar as funções necessárias do SDK do Firebase
@@ -55,7 +55,6 @@ export default function App() {
         }
 
         setLoading(true);
-        // Utiliza o ID do utilizador para criar uma coleção privada
         const contactsCollectionRef = collection(db, `users/${userId}/contacts`);
         
         const unsubscribe = onSnapshot(contactsCollectionRef, (snapshot) => {
@@ -71,26 +70,42 @@ export default function App() {
         return () => unsubscribe();
     }, [userId]);
 
-    // Função para guardar (adicionar ou atualizar) um contacto
+    // Função para guardar (adicionar ou atualizar) um contacto - VERSÃO DEFENSIVA
     const handleSaveContact = async (contact) => {
         if (!userId) {
             alert("Utilizador não autenticado.");
             return;
         }
-        const contactsCollectionRef = collection(db, `users/${userId}/contacts`);
+        
+        console.log("A tentar guardar o seguinte contacto:", contact);
 
         try {
+            // Cria um objeto de dados limpo, garantindo que não há campos indefinidos
+            const dataToSave = {
+                name: contact.name || '',
+                email: contact.email || '',
+                phone: contact.phone || ''
+            };
+
+            console.log("Dados que serão enviados para o Firestore:", dataToSave);
+
             if (contact.id) {
+                // Se existe um ID, ATUALIZA o documento existente.
+                console.log(`A atualizar o documento com ID: ${contact.id}`);
                 const contactDocRef = doc(db, `users/${userId}/contacts`, contact.id);
-                const { id, ...contactData } = contact;
-                await updateDoc(contactDocRef, contactData);
+                await updateDoc(contactDocRef, dataToSave);
+                console.log("Documento atualizado com sucesso.");
             } else {
-                await addDoc(contactsCollectionRef, contact);
+                // Se NÃO existe um ID, ADICIONA um novo documento.
+                console.log("A adicionar um novo documento.");
+                const contactsCollectionRef = collection(db, `users/${userId}/contacts`);
+                await addDoc(contactsCollectionRef, dataToSave);
+                console.log("Novo documento adicionado com sucesso.");
             }
             setCurrentContact(null);
         } catch (err) {
-            console.error("Erro ao guardar o contacto:", err);
-            alert("Ocorreu um erro ao guardar o contacto.");
+            console.error("ERRO DETALHADO ao guardar no Firestore:", err);
+            alert("Ocorreu um erro ao guardar o contacto. Verifique a consola para mais detalhes.");
         }
     };
 

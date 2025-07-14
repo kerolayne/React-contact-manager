@@ -14,12 +14,8 @@ export default function ContactList({ contacts = [], onDelete, onEdit }) {
     // Filtra os contactos com base no texto do filtro.
     // useMemo otimiza o desempenho, recalculando a lista apenas quando 'contacts' ou 'filter' mudam.
     const filteredContacts = useMemo(() => {
-        if (!filter) {
-            return contacts;
-        }
-        return contacts.filter(contact =>
-            contact.name.toLowerCase().includes(filter.toLowerCase())
-        );
+        if (!filter) return contacts;
+        return contacts.filter(contact => contact.name.toLowerCase().includes(filter.toLowerCase()));
     }, [contacts, filter]);
 
     return (

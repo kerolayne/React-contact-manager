@@ -1,6 +1,5 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
 import { getFirestore } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
 // TODO: Add SDKs for Firebase products that you want to use
@@ -18,9 +17,14 @@ const firebaseConfig = {
   measurementId: "G-2DX34N40NB"
 };
 
+console.log("A ser lido de firebaseConfig.js:", firebaseConfig);
+if (!firebaseConfig.apiKey || firebaseConfig.apiKey === "SUA_API_KEY") {
+  console.error("ATENÇÃO: A sua chave de API (apiKey) do Firebase parece estar em falta ou não foi substituída!");
+}
+
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
+
 const db = getFirestore(app);
 const auth = getAuth(app);
 
