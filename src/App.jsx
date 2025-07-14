@@ -6,7 +6,7 @@ import React, { useState, useEffect } from 'react';
 // 1. Importar os componentes e a configuração do Firebase
 import ContactForm from './components/ContactForm';
 import ContactList from './components/ContactList';
-import { db, auth } from './firebaseConfig';
+import { db } from './firebaseConfig';
 
 // 2. Importar as funções necessárias do SDK do Firebase
 import { onAuthStateChanged, signInAnonymously } from 'firebase/auth';
