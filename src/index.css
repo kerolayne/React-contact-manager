@@ -143,7 +143,7 @@ a:hover {
   background-color: #000;
   color: #fff;
   border: none;
-  border-radius: 999px; /* Bordas totalmente arredondadas */
+  border-radius: 8px; /* Bordas levemente arredondadas */
   padding: 0.75rem 2rem; /* Padding interno confortável */
   font-weight: 500;
   font-size: 1rem;
@@ -208,7 +208,9 @@ textarea {
 .contact-list {
   display: grid;
   grid-template-columns: 1fr;
+  list-style: none;
   gap: 1rem; /* Espaçamento entre os cards */
+  margin-top: 1.5rem;
 }
 
 .contact-card {
@@ -238,12 +240,13 @@ textarea {
 }
 
 /* Estilo compartilhado para os botões de editar e apagar */
+/* Estilo novo para botões mais quadrados */
 .edit-button,
 .delete-button {
   background-color: #000;
   color: #fff;
   border: none;
-  border-radius: 999px;
+  border-radius: 8px; /* <-- Altere para um valor mais baixo */
   padding: 0.5rem 1rem;
   font-weight: 500;
   font-size: 0.9rem;
