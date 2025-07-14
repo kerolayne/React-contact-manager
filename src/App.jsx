@@ -1,174 +1,127 @@
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
-import './index.css'
 import React, { useState, useEffect } from 'react';
+import ContactForm from './components/ContactForm'; // Certifique-se que o caminho está correto
+import ContactList from './components/ContactList'; // Certifique-se que o caminho está correto
+import './index.css'; // Importa o nosso CSS completo
 
-// 1. Importar os componentes e a configuração do Firebase
-import ContactForm from './ContactForm';
-import ContactList from './ContactList';
-import { db , auth} from './firebaseConfig';
+// Função para gerar IDs únicos simples
+const generateId = () => `id_${new Date().getTime()}`;
 
-// 2. Importar as funções necessárias do SDK do Firebase
-import { onAuthStateChanged, signInAnonymously } from 'firebase/auth';
-import { 
-    collection, 
-    doc, 
-    onSnapshot, 
-    addDoc, 
-    updateDoc, 
-    deleteDoc 
-} from 'firebase/firestore';
+function App() {
+  // Estado para a lista de contactos. Começa com um exemplo.
+  const [contacts, setContacts] = useState([]);
+  
+  // Estado para controlar a página visível ('search' ou 'new')
+  const [activePage, setActivePage] = useState('search');
+  
+  // Estado para guardar o contacto que está a ser editado
+  const [currentContact, setCurrentContact] = useState(null);
 
-/**
- * Componente Principal App
- * Gere o estado e orquestra o fluxo da aplicação.
- */
-export default function App() {
-    const [contacts, setContacts] = useState([]);
-    const [currentContact, setCurrentContact] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const [userId, setUserId] = useState(null);
-    const [error, setError] = useState(null);
+  // Efeito para renderizar os ícones da biblioteca Lucide
+  useEffect(() => {
+    // Adicionamos um pequeno atraso para garantir que o React já renderizou o HTML
+    const timer = setTimeout(() => {
+      if (window.lucide) {
+        window.lucide.createIcons();
+      }
+    }, 0);
+    // Limpa o timer para evitar execuções desnecessárias
+    return () => clearTimeout(timer);
+  }, [activePage, contacts]); // Executa sempre que a página ou a lista de contactos muda
 
-    // Efeito para autenticação anónima do utilizador
-    useEffect(() => {
-        const unsubscribe = onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                setUserId(user.uid);
-            } else {
-                try {
-                    await signInAnonymously(auth);
-                } catch (err) {
-                    console.error("Erro de Autenticação Anónima:", err);
-                    setError("Falha na autenticação. Não é possível carregar ou guardar dados.");
-                }
-            }
-        });
-        return () => unsubscribe();
-    }, []);
+  // Função para guardar (adicionar ou atualizar) um contacto
+  const handleSave = (contactData) => {
+    if (contactData.id) {
+      // Atualizar um contacto existente
+      setContacts(contacts.map(c => c.id === contactData.id ? contactData : c));
+    } else {
+      // Adicionar um novo contacto com um novo ID
+      setContacts([...contacts, { ...contactData, id: generateId() }]);
+    }
+    setCurrentContact(null); // Limpa a seleção de edição
+    setActivePage('search'); // Volta para a lista de contactos após guardar
+  };
 
-    // Efeito para carregar os contactos em tempo real
-    useEffect(() => {
-        if (!userId) {
-            setLoading(false);
-            return;
-        }
+  // Função para apagar um contacto
+  const handleDelete = (contactId) => {
+    setContacts(contacts.filter(c => c.id !== contactId));
+  };
 
-        setLoading(true);
-        const contactsCollectionRef = collection(db, `users/${userId}/contacts`);
-        
-        const unsubscribe = onSnapshot(contactsCollectionRef, (snapshot) => {
-            const contactsData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-            setContacts(contactsData);
-            setLoading(false);
-        }, (err) => {
-            console.error("Erro no Snapshot do Firestore:", err);
-            setError("Não foi possível carregar os contactos.");
-            setLoading(false);
-        });
+  // Função para preparar a edição de um contacto
+  const handleEdit = (contact) => {
+    setCurrentContact(contact);
+    setActivePage('new'); // Muda para a página do formulário
+  };
+  
+  // Função para cancelar a edição
+  const handleCancelEdit = () => {
+    setCurrentContact(null);
+    setActivePage('search');
+  };
 
-        return () => unsubscribe();
-    }, [userId]);
+  return (
+    <>
+      <div className="container">
+        <header className="app-header">
+          <div className="user-greeting">
+            <p className="welcome-text">Olá,</p>
+            <h1 className="user-name">Usuário</h1>
+          </div>
+        </header>
 
-    // Função para guardar (adicionar ou atualizar) um contacto - VERSÃO DEFENSIVA
-    const handleSaveContact = async (contact) => {
-        if (!userId) {
-            alert("Utilizador não autenticado.");
-            return;
-        }
-        
-        console.log("A tentar guardar o seguinte contacto:", contact);
+        <main>
+          <section className="summary-card">
+            <div className="details">
+              <p className="value">{contacts.length}</p>
+              <p className="label">Total de Contatos</p>
+            </div>
+            <i data-lucide="users" className="icon"></i>
+          </section>
 
-        try {
-            // Cria um objeto de dados limpo, garantindo que não há campos indefinidos
-            const dataToSave = {
-                name: contact.name || '',
-                email: contact.email || '',
-                phone: contact.phone || ''
-            };
+          {/* Página de Procurar Contatos */}
+          <section id="page-search" className={`page ${activePage !== 'search' ? 'hidden' : ''}`}>
+            <h2>Meus Contatos</h2>
+            <ContactList 
+              contacts={contacts} 
+              onDelete={handleDelete} 
+              onEdit={handleEdit} 
+            />
+          </section>
 
-            console.log("Dados que serão enviados para o Firestore:", dataToSave);
+          {/* Página de Novo/Editar Contato */}
+          <section id="page-new" className={`page ${activePage !== 'new' ? 'hidden' : ''}`}>
+            <h2>{currentContact ? 'Editar Contato' : 'Novo Contato'}</h2>
+            <ContactForm 
+              currentContact={currentContact}
+              onSave={handleSave}
+              onCancelEdit={handleCancelEdit}
+            />
+          </section>
+        </main>
+      </div>
 
-            if (contact.id) {
-                // Se existe um ID, ATUALIZA o documento existente.
-                console.log(`A atualizar o documento com ID: ${contact.id}`);
-                const contactDocRef = doc(db, `users/${userId}/contacts`, contact.id);
-                await updateDoc(contactDocRef, dataToSave);
-                console.log("Documento atualizado com sucesso.");
-            } else {
-                // Se NÃO existe um ID, ADICIONA um novo documento.
-                console.log("A adicionar um novo documento.");
-                const contactsCollectionRef = collection(db, `users/${userId}/contacts`);
-                await addDoc(contactsCollectionRef, dataToSave);
-                console.log("Novo documento adicionado com sucesso.");
-            }
-            setCurrentContact(null);
-        } catch (err) {
-            console.error("ERRO DETALHADO ao guardar no Firestore:", err);
-            alert("Ocorreu um erro ao guardar o contacto. Verifique a consola para mais detalhes.");
-        }
-    };
-
-    // Função para apagar um contacto
-    const handleDeleteContact = async (id) => {
-        if (!userId) {
-            alert("Utilizador não autenticado.");
-            return;
-        }
-        if (window.confirm("Tem a certeza que deseja apagar este contacto?")) {
-            try {
-                const contactDocRef = doc(db, `users/${userId}/contacts`, id);
-                await deleteDoc(contactDocRef);
-            } catch (err) {
-                console.error("Erro ao apagar o contacto:", err);
-                alert("Ocorreu um erro ao apagar o contacto.");
-            }
-        }
-    };
-    
-    // Função para selecionar um contacto para edição
-    const handleEditContact = (contact) => {
-        setCurrentContact(contact);
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    };
-
-    // Função para cancelar a edição
-    const handleCancelEdit = () => {
-        setCurrentContact(null);
-    };
-
-    return (
-        <div className="bg-gray-100 min-h-screen font-sans">
-            <header className="bg-white shadow-sm">
-                <div className="max-w-4xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
-                    <h1 className="text-3xl font-bold leading-tight text-gray-900">
-                        
-                        Gestor de Contactos
-                    </h1>
-                </div>
-            </header>
-            <main className="max-w-4xl mx-auto py-6 sm:px-6 lg:px-8">
-                <div className="px-4 py-6 sm:px-0">
-                    {error && <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">{error}</div>}
-                    
-                    <ContactForm 
-                        currentContact={currentContact} 
-                        onSave={handleSaveContact} 
-                        onCancelEdit={handleCancelEdit} 
-                    />
-
-                    {loading ? (
-                        <p className="text-center text-gray-600">A carregar contactos...</p>
-                    ) : (
-                        <ContactList 
-                            contacts={contacts} 
-                            onEdit={handleEditContact} 
-                            onDelete={handleDeleteContact} 
-                        />
-                    )}
-                </div>
-            </main>
-        </div>
-    );
+      <nav className="bottom-nav">
+        <a 
+          id="nav-search" 
+          className={`nav-item ${activePage === 'search' ? 'active' : ''}`}
+          onClick={() => setActivePage('search')}
+        >
+          <i data-lucide="search"></i>
+          <span>Procurar</span>
+        </a>
+        <a 
+          id="nav-new" 
+          className={`nav-item ${activePage === 'new' ? 'active' : ''}`}
+          onClick={() => {
+            setCurrentContact(null); // Limpa qualquer edição pendente ao clicar em "Novo"
+            setActivePage('new');
+          }}
+        >
+          <i data-lucide="user-plus"></i>
+          <span>Novo Contato</span>
+        </a>
+      </nav>
+    </>
+  );
 }
+
+export default App;

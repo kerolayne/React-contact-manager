@@ -1,272 +1,195 @@
 /* ==========================================================================
-   Estilo Base e Reset
+   Variáveis Globais e Estilo Base
    ========================================================================== */
 
-/*
- * Usamos box-sizing: border-box para um modelo de caixa mais intuitivo.
- * Isso significa que padding e border são incluídos na largura e altura totais.
- */
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+    --color-bg: #f4f6f8;
+    --color-text: #2c3e50;
+    --color-text-light: #7f8c8d;
+    --color-card-blue: #5dade2;
+    --color-white: #ffffff;
+    --shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
 }
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  background-color: #ffffff;
-  color: #1d1d1f; /* Um preto mais suave que o #000, como no design da Apple */
-  line-height: 1.6;
+    font-family: 'Inter', sans-serif;
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    padding-bottom: 80px;
 }
 
-/* Layout principal da aplicação */
-.App {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 80px 20px 20px; /* Padding superior para compensar o cabeçalho fixo */
-}
+.container { max-width: 800px; margin: 0 auto; padding: 1.5rem; }
 
 /* ==========================================================================
-   Cabeçalho (Header)
+   Estrutura Principal (Header, Páginas, Nav)
    ========================================================================== */
 
-.App-header {
-  background-color: rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border-bottom: 1px solid #e0e0e0;
-  padding: 0 20px;
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 1000;
-  height: 60px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
+.app-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+.user-greeting .welcome-text { font-size: 1.2rem; color: var(--color-text-light); }
+.user-greeting .user-name { font-size: 1.8rem; font-weight: 700; }
 
-.logo {
-  font-size: 1.5rem;
-  font-weight: 600;
-  color: #000;
-}
+.summary-card { display: flex; justify-content: space-between; align-items: center; padding: 1.5rem; border-radius: 16px; color: var(--color-white); box-shadow: var(--shadow); background: linear-gradient(135deg, #5dade2, #2980b9); margin-bottom: 2rem; }
+.summary-card .details .value { font-size: 2rem; font-weight: 700; }
+.summary-card .details .label { font-size: 1rem; opacity: 0.9; }
+.summary-card .icon { width: 48px; height: 48px; opacity: 0.8; }
+
+.page { background-color: var(--color-white); padding: 2rem; border-radius: 16px; box-shadow: var(--shadow); }
+.page h2 { font-size: 1.5rem; font-weight: 600; margin-bottom: 1.5rem; }
+.hidden { display: none; }
+
+.bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background-color: var(--color-white); display: flex; justify-content: space-around; padding: 0.75rem 0; box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.08); border-top: 1px solid #eee; }
+.nav-item { cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 0.25rem; color: var(--color-text-light); text-decoration: none; font-size: 0.75rem; flex-grow: 1; }
+.nav-item.active { color: var(--color-card-blue); font-weight: 600; }
+.nav-item i { width: 24px; height: 24px; }
 
 /* ==========================================================================
-   Tipografia
+   Estilos para Formulário de Contato
    ========================================================================== */
-
-h1, h2, h3, h4, h5, h6 {
-  font-weight: 600;
-  margin-bottom: 0.75em;
-  line-height: 1.2;
-}
-
-h1 {
-  font-size: 2.5rem; /* Título marcante */
-}
-
-h2 {
-  font-size: 2rem;
-  border-bottom: 1px solid #e0e0e0;
-  padding-bottom: 0.5em;
-  margin-top: 1.5em;
-}
-
-p {
-  font-weight: 400; /* Peso elegante */
-  margin-bottom: 1em;
-}
-
-a {
-  color: #0071e3; /* Azul padrão da Apple para links */
-  text-decoration: none;
-  transition: all 0.3s ease;
-}
-
-a:hover {
-  text-decoration: underline;
-  opacity: 0.8;
-}
-
-/* ==========================================================================
-   Botões (Buttons)
-   ========================================================================== */
-
-.btn {
-  display: inline-block;
-  background-color: #0071e3;
-  color: #ffffff;
-  border: none;
-  border-radius: 18px; /* Bordas suaves, estilo pílula */
-  padding: 10px 20px;
-  font-size: 1rem;
-  font-weight: 500;
-  cursor: pointer;
-  text-align: center;
-  text-decoration: none;
-  transition: all 0.3s ease;
-}
-
-.btn:hover {
-  background-color: #0077ed;
-  transform: translateY(-2px); /* Efeito sutil de elevação */
-}
-
-.btn-secondary {
-  background-color: #e0e0e0;
-  color: #1d1d1f;
-}
-
-.btn-secondary:hover {
-  background-color: #d1d1d1;
-}
-
-.btn-dark {
-  background-color: #1d1d1f;
-  color: #ffffff;
-}
-
-.btn-dark:hover {
-  background-color: #333;
-}
-
-.submit-button {
-  display: block; /* Permite o uso de margin: auto para centralizar */
-  margin: 2rem auto 0; /* Adiciona margem superior e centraliza horizontalmente */
-  width: fit-content; /* Ajusta a largura ao conteúdo */
-  background-color: #000;
-  color: #fff;
-  border: none;
-  border-radius: 8px; /* Bordas levemente arredondadas */
-  padding: 0.75rem 2rem; /* Padding interno confortável */
-  font-weight: 500;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.submit-button:hover {
-  background-color: #333; /* Efeito hover sutil */
-}
-
-
-/* ==========================================================================
-   Formulários (Forms)
-   ========================================================================== */
-
 .form-group {
-  margin-bottom: 1.5rem;
+    margin-bottom: 1.5rem;
 }
 
-label {
-  display: block;
-  font-weight: 500;
-  margin-bottom: 0.5rem;
+.form-group label {
+    display: block;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
 }
 
 input[type="text"],
 input[type="email"],
-input[type="password"],
-input[type="tel"],
-textarea {
-  width: 100%;
-  padding: 12px;
-  font-size: 1rem;
-  font-family: inherit;
-  border: 1px solid #d2d2d7;
-  border-radius: 12px; /* Bordas arredondadas */
-  background-color: #f5f5f7;
-  transition: all 0.3s ease;
+input[type="tel"] {
+    width: 100%;
+    padding: 12px;
+    font-size: 1rem;
+    font-family: inherit;
+    border: 1px solid #ced4da;
+    border-radius: 8px;
+    background-color: #f8f9fa;
+    transition: all 0.3s ease;
 }
 
 input[type="text"]:focus,
 input[type="email"]:focus,
-input[type="password"]:focus,
-input[type="tel"]:focus,
-textarea:focus {
-  outline: none;
-  border-color: #0071e3;
-  box-shadow: 0 0 0 2px rgba(0, 113, 227, 0.2); /* Foco suave */
-  background-color: #fff;
+input[type="tel"]:focus {
+    outline: none;
+    border-color: var(--color-card-blue);
+    box-shadow: 0 0 0 3px rgba(93, 173, 226, 0.2);
+    background-color: var(--color-white);
 }
 
-textarea {
-  resize: vertical;
-  min-height: 120px;
+.form-buttons {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.btn-primary {
+    flex-grow: 1;
+    background-color: var(--color-text);
+    color: var(--color-white);
+    border: none;
+    border-radius: 8px;
+    padding: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+.btn-primary:hover {
+    background-color: #495057;
+}
+
+.btn-secondary {
+    flex-grow: 1;
+    background-color: #e9ecef;
+    color: var(--color-text);
+    border: 1px solid #ced4da;
+    border-radius: 8px;
+    padding: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+.btn-secondary:hover {
+    background-color: #dee2e6;
 }
 
 /* ==========================================================================
-   Lista de Contatos (Card Style) - ATUALIZADO
+   Estilos para Lista de Contatos
    ========================================================================== */
 
+.filter-input {
+    width: 100%;
+    margin-bottom: 1.5rem;
+}
+
 .contact-list {
-  display: grid;
-  grid-template-columns: 1fr;
-  list-style: none;
-  gap: 1rem; /* Espaçamento entre os cards */
-  margin-top: 1.5rem;
+    list-style: none;
+    padding: 0;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
 }
 
 .contact-card {
-  background-color: #ffffff;
-  border: 1px solid #e0e0e0;
-  border-radius: 12px;
-  padding: 1rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); /* Sombra sutil */
+    background-color: var(--color-bg);
+    border: 1px solid #e9ecef;
+    border-radius: 12px;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+@media (min-width: 600px) {
+    .contact-card {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+    }
 }
 
 .contact-card h3 {
-  margin-top: 0;
-  margin-bottom: 0.5rem;
-  font-weight: 600;
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0;
 }
 
 .contact-card p {
-  margin-bottom: 0.25rem;
-  color: #6e6e73;
+    font-size: 0.9rem;
+    color: var(--color-text-light);
+    margin: 0;
 }
 
 .contact-buttons {
-  display: flex;
-  justify-content: flex-end; /* Alinha os botões à direita */
-  gap: 0.5rem; /* Espaço entre os botões */
-  margin-top: 1rem;
+    display: flex;
+    gap: 0.5rem;
+    flex-shrink: 0;
 }
 
-/* Estilo compartilhado para os botões de editar e apagar */
-/* Estilo novo para botões mais quadrados */
 .edit-button,
 .delete-button {
-  background-color: #000;
-  color: #fff;
-  border: none;
-  border-radius: 8px; /* <-- Altere para um valor mais baixo */
-  padding: 0.5rem 1rem;
-  font-weight: 500;
-  font-size: 0.9rem;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
+    background-color: var(--color-text);
+    color: var(--color-white);
+    border: none;
+    border-radius: 8px;
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
 }
 
 .edit-button:hover,
 .delete-button:hover {
-  background-color: #333;
+    background-color: #495057;
 }
 
-
-/* ==========================================================================
-   Responsividade
-   ========================================================================== */
-
-/* Para telas maiores, como tablets e desktops, a lista de contatos pode ter mais colunas */
-@media (min-width: 600px) {
-  .contact-list {
-    grid-template-columns: repeat(2, 1fr); /* Duas colunas */
-  }
+.no-contacts-message {
+    text-align: center;
+    color: var(--color-text-light);
+    padding: 2rem 0;
 }
