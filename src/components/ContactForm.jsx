@@ -37,7 +37,7 @@ export default function ContactForm({ currentContact, onSave, onCancelEdit }) {
                     type="text"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    placeholder="Nome do Contato"
+                    placeholder="Nome do contacto"
                     required
                 />
             </div>
@@ -68,7 +68,7 @@ export default function ContactForm({ currentContact, onSave, onCancelEdit }) {
             */}
             <div className="form-buttons">
                 <button type="submit" className="btn-primary">
-                    {isEditing ? 'Atualizar Contato' : 'Guardar Contato'}
+                    {isEditing ? 'Atualizar contacto' : 'Guardar contacto'}
                 </button>
                 {isEditing && (
                     <button type="button" onClick={onCancelEdit} className="btn-secondary">
